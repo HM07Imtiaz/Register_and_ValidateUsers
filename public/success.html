@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Success</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; }
+    .message { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h2 class="message">Login successful. You are a validated user.</h2>
+  <button onclick="goBack()">Go Back to Login</button>
+
+  <script>
+    function goBack() {
+      // Navigate to login page with full reload to reset input fields
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

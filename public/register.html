@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f0f2f5;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
+    }
+    .container h2 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      color: #333;
+    }
+    .container input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    .container input:focus {
+      border-color: #28a745;
+      outline: none;
+    }
+    .container button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 16px;
+      border: none;
+      border-radius: 6px;
+      background: #28a745;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .container button:hover {
+      background: #1e7e34;
+    }
+    .message {
+      margin-top: 16px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #d4edda;
+      color: #155724;
+      display: none;
+      font-size: 0.95rem;
+    }
+    .container a {
+      display: block;
+      margin-top: 12px;
+      color: #007bff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .container a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Register</h2>
+    <form id="registerForm" autocomplete="off">
+      <input name="username" placeholder="Username" required>
+      <input name="password" type="password" placeholder="Password" required>
+      <button type="submit">Register</button>
+    </form>
+    <div class="message" id="msgBox"></div>
+    <a href="/login.html">Already have an account? Login</a>
+  </div>
+
+  <script>
+    window.addEventListener('pageshow', () => {
+      document.getElementById('registerForm').reset();
+      document.getElementById('msgBox').style.display = 'none';
+    });
+
+    document.getElementById('registerForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const form = new FormData(e.target);
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          username: form.get('username'),
+          password: form.get('password')
+        })
+      });
+      const msg = await res.text();
+      const box = document.getElementById('msgBox');
+      box.textContent = msg;
+      box.style.display = 'block';
+      if (res.ok) e.target.reset();
+    };
+  </script>
+</body>
+</html>
