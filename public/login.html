@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <style>
-    /* Page background & centering */
     body {
       margin: 0;
       height: 100vh;
@@ -14,42 +13,39 @@
       background: #f0f2f5;
       font-family: 'Segoe UI', sans-serif;
     }
-    /* Card container */
     .container {
       background: #fff;
       padding: 30px 40px;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      width: 320px;
+      width: 340px;
       text-align: center;
     }
-    /* Heading */
     .container h2 {
       margin-bottom: 20px;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: #333;
     }
-    /* Inputs */
-    .container input {
+    .container input, .container textarea {
       width: 100%;
       padding: 12px;
       margin: 8px 0;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 1rem;
+      box-sizing: border-box;
     }
-    .container input:focus {
-      border-color: #007bff;
+    .container input:focus, .container textarea:focus {
+      border-color: #28a745;
       outline: none;
     }
-    /* Button */
     .container button {
       width: 100%;
       padding: 12px;
       margin-top: 16px;
       border: none;
       border-radius: 6px;
-      background: #007bff;
+      background: #3761ec;
       color: #fff;
       font-size: 1rem;
       cursor: pointer;
@@ -58,7 +54,6 @@
     .container button:hover {
       background: #0056b3;
     }
-    /* Message box */
     .message {
       margin-top: 16px;
       padding: 10px;
@@ -68,7 +63,6 @@
       display: none;
       font-size: 0.95rem;
     }
-    /* Link */
     .container a {
       display: block;
       margin-top: 12px;
@@ -94,30 +88,38 @@
   </div>
 
   <script>
-    window.addEventListener('pageshow', () => {
-      document.getElementById('loginForm').reset();
-      document.getElementById('msgBox').style.display = 'none';
+  window.addEventListener('pageshow', () => {
+    document.getElementById('loginForm').reset();
+    document.getElementById('msgBox').style.display = 'none';
+  });
+
+  document.getElementById('loginForm').onsubmit = async (e) => {
+    e.preventDefault();
+
+    const form = new FormData(e.target);
+    const username = form.get('username');
+    const password = form.get('password');
+
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
     });
 
-    document.getElementById('loginForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const form = new FormData(e.target);
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          username: form.get('username'),
-          password: form.get('password')
-        })
-      });
-      const msg = await res.text();
-      const box = document.getElementById('msgBox');
-      box.textContent = msg;
+    const box = document.getElementById('msgBox');
+    const result = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem('userData', JSON.stringify(result));
+      box.textContent = `Welcome ${result.username}!`;
       box.style.display = 'block';
-      if (res.ok) {
-        setTimeout(() => window.location.href = '/success.html', 1000);
-      }
-    };
-  </script>
+      setTimeout(() => window.location.href = '/success.html', 1000);
+    } else {
+      box.textContent = result.message || 'Login failed';
+      box.style.display = 'block';
+    }
+  };
+</script>
+
 </body>
 </html>

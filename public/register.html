@@ -18,23 +18,24 @@
       padding: 30px 40px;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      width: 320px;
+      width: 340px;
       text-align: center;
     }
     .container h2 {
       margin-bottom: 20px;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: #333;
     }
-    .container input {
+    .container input, .container textarea {
       width: 100%;
       padding: 12px;
       margin: 8px 0;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 1rem;
+      box-sizing: border-box;
     }
-    .container input:focus {
+    .container input:focus, .container textarea:focus {
       border-color: #28a745;
       outline: none;
     }
@@ -76,10 +77,14 @@
 </head>
 <body>
   <div class="container">
-    <h2>Register</h2>
+    <h2>Create Account</h2>
     <form id="registerForm" autocomplete="off">
       <input name="username" placeholder="Username" required>
       <input name="password" type="password" placeholder="Password" required>
+      <input name="fullname" placeholder="Full Name" required>
+      <input name="email" type="email" placeholder="Email" required>
+      <input name="phone" placeholder="Phone Number" required>
+      <textarea name="address" placeholder="Address" rows="3" required></textarea>
       <button type="submit">Register</button>
     </form>
     <div class="message" id="msgBox"></div>
@@ -97,16 +102,22 @@
       const form = new FormData(e.target);
       const res = await fetch('/api/register', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: form.get('username'),
-          password: form.get('password')
+          password: form.get('password'),
+          fullname: form.get('fullname'),
+          email: form.get('email'),
+          phone: form.get('phone'),
+          address: form.get('address')
         })
       });
+
       const msg = await res.text();
       const box = document.getElementById('msgBox');
       box.textContent = msg;
       box.style.display = 'block';
+
       if (res.ok) e.target.reset();
     };
   </script>

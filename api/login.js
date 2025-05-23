@@ -1,4 +1,3 @@
-// api/login.js
 import { supabase } from '../db.js';
 
 export default async function handler(req, res) {
@@ -7,21 +6,28 @@ export default async function handler(req, res) {
   try {
     const { username, password } = req.body;
 
-    const { data, error } = await supabase
+    // Get the user by username
+    const { data: user, error } = await supabase
       .from('users')
       .select('*')
       .eq('username', username)
-      .eq('password', password);
+      .single();
 
-    if (error) throw error;
-
-    if (data.length > 0) {
-      res.status(200).end('Login successful. You are a validated user.');
-    } else {
-      res.status(401).end('Invalid username or password');
+    if (error || !user) {
+      return res.status(401).json({ message: 'Invalid username or password' });
     }
+
+    // For now using plaintext check (replace with bcrypt if hashed)
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    // Strip password from response before sending
+    const { password: _, ...safeUser } = user;
+
+    return res.status(200).json(safeUser);
   } catch (err) {
-    console.error(err);
-    res.status(500).end('Supabase error');
+    console.error('Login error:', err.message);
+    res.status(500).json({ message: 'Supabase error' });
   }
 }
